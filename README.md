@@ -1,4 +1,4 @@
-# # 中通开放平台SDK for Go
+## 中通开放平台SDK for Go
 
 官方 API 文档地址：https://zop.zto.com/apiDoc/
 
@@ -50,3 +50,5 @@
    resp, err := client.SubmitOrderCode(ztoContent)
    //TODO ......
    ```
+## License
+  feeeei/ztosdk is released under the [MIT License](https://opensource.org/licenses/MIT).
