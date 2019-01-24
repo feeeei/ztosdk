@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/feeeei/ztosdk/common"
@@ -17,9 +16,9 @@ func init() {
 	httpClient = &http.Client{}
 }
 
-func (client *ZTOClient) postRequest(path string, r *common.ZTORequest) (*common.ZTOResponse, error) {
+func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*common.ZTOResponse, error) {
 	url := fmt.Sprintf("%s%s", client.Host, path)
-	requestBody, err := buildBody(r)
+	requestBody, err := r.EncodeBody()
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +28,7 @@ func (client *ZTOClient) postRequest(path string, r *common.ZTORequest) (*common
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 	req.Header.Add("X-Companyid", client.CompanyID)
-	req.Header.Add("X-Datadigest", r.GetSign())
+	req.Header.Add("X-Datadigest", sign)
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -57,13 +56,4 @@ func (client *ZTOClient) postRequest(path string, r *common.ZTORequest) (*common
 	}
 
 	return &response, nil
-}
-
-func buildBody(r *common.ZTORequest) (string, error) {
-	jsonBody, err := json.Marshal(r)
-	if err != nil {
-		return "", err
-	}
-	values := url.Values{"data": []string{string(jsonBody)}}
-	return values.Encode(), nil
 }

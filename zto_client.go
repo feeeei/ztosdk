@@ -36,24 +36,40 @@ func getEnvironment(host string) bool {
 }
 
 // SubmitOrderCode 创建电子运单
-// 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取运单号
-func (client *ZTOClient) SubmitOrderCode(r *common.ZTOContent) (*common.ZTOResponse, error) {
+// 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取运单号（有密钥）
+func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZTOResponse, error) {
 	if client.Debug {
-		r.ID = "xfs101100111011"
+		content.ID = "xfs101100111011"
 	}
 	now := base.Time(time.Now())
-	request := common.ZTORequest{
+	request := &common.ZTOSubmitEncryptRequest{
 		Partner:  client.Partner,
 		Datetime: &now,
 		Verify:   client.Verify,
-		Content:  r,
+		Content:  content,
 	}
-	if err := request.Sign(client.Key); err != nil {
-		return nil, err
-	}
-	resp, err := client.postRequest("submitOrderCode", &request)
+	sign, err := request.Sign(client.Key)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return client.postRequest("submitOrderCode", sign, request)
+}
+
+// PartnerInsertSubmitagent 创建电子运单
+// 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取单号（无秘钥）
+func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*common.ZTOResponse, error) {
+	if client.Debug {
+		content.Partner = "test"
+		content.ID = "xfs101100111011"
+	}
+	request := &common.ZTOSubmitAgentRequest{
+		CompanyID: client.CompanyID,
+		MsgType:   "submitAgent",
+		Data:      content,
+	}
+	sign, err := request.Sign(client.Key)
+	if err != nil {
+		return nil, err
+	}
+	return client.postRequest("partnerInsertSubmitagent", sign, request)
 }

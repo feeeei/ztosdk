@@ -4,6 +4,7 @@
 
 ## 实现接口列表
  - 获取运单号（有秘钥） submitOrderCode
+ - 获取单号（无密钥） partnerInsertSubmitagent
 
 ## 使用示例
 1. 引入
@@ -14,6 +15,9 @@
 2. New Client
    ```go
    // 测试环境参数
+   // 不同业务接口有不同的测试参数，请注意区分
+   // 如果某些业务仅需其中几个字段，其它字段请传递""
+   // 下述参数为 获取运单号（有秘钥） submitOrderCode 测试参数
    host      := "http://58.40.16.120:9001/"
    companyID := "kfpttestCode"
    key       := "kfpttestkey=="
@@ -22,11 +26,9 @@
  
    client := ztosdk.NewZTOClient(host, companyID, key, partner, verify)
    ```
-3. 实现业务
+3. 构造 Content
  
    ```go
- 
-   // 获取运单号（有秘钥） submitOrderCode
    ztoContent := &common.ZTOContent{
 		ID:      "id",
 		TypeID:  "1",
@@ -46,9 +48,17 @@
 			City:    "北京市,北京市,xx区",
 			Address: "详细地址",
 		},
-	})
+   })
+   ```
+4. 实现业务
+   ```go
+   // 获取运单号（有秘钥） submitOrderCode
    resp, err := client.SubmitOrderCode(ztoContent)
-   //TODO ......
+   // TODO ......
+
+   // 获取单号（无密钥） partnerInsertSubmitagent
+   resp, err := client.PartnerInsertSubmitagent(ztoContent)
+   // TODO ......
    ```
 ## License
   feeeei/ztosdk is released under the [MIT License](https://opensource.org/licenses/MIT).
