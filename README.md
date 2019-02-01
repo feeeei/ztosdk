@@ -1,6 +1,6 @@
 ## 中通开放平台SDK for Go
 
-官方 API 文档地址：https://zop.zto.com/apiDoc/
+官方 API 文档地址：[https://zop.zto.com/apiDoc/](https://zop.zto.com/apiDoc/)
 
 ## 实现接口列表
  - 获取运单号（有秘钥） submitOrderCode

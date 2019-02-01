@@ -37,7 +37,7 @@ func getEnvironment(host string) bool {
 
 // SubmitOrderCode 创建电子运单
 // 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取运单号（有密钥）
-func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZTOResponse, error) {
+func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZTOOrderResponse, error) {
 	if client.Debug {
 		content.ID = "xfs101100111011"
 	}
@@ -52,12 +52,12 @@ func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZT
 	if err != nil {
 		return nil, err
 	}
-	return client.postRequest("submitOrderCode", sign, request)
+	return client.postOrderRequest("submitOrderCode", sign, request)
 }
 
 // PartnerInsertSubmitagent 创建电子运单
 // 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取单号（无秘钥）
-func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*common.ZTOResponse, error) {
+func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*common.ZTOOrderResponse, error) {
 	if client.Debug {
 		content.Partner = "test"
 		content.ID = "xfs101100111011"
@@ -71,5 +71,15 @@ func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*
 	if err != nil {
 		return nil, err
 	}
-	return client.postRequest("partnerInsertSubmitagent", sign, request)
+	return client.postOrderRequest("partnerInsertSubmitagent", sign, request)
+}
+
+// DoPrint 云打印-打印接口
+// 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 云打印-打印接口
+func (client *ZTOClient) DoPrint(request *common.ZTOPrintRequest) (*common.ZTOPrintResponse, error) {
+	sign, err := request.Sign(client.Key)
+	if err != nil {
+		return nil, err
+	}
+	return client.postPrintRequest("doPrint", sign, request)
 }

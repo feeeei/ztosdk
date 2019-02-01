@@ -1,6 +1,6 @@
 package common
 
-type ZTOResponse struct {
+type ZTOOrderResponse struct {
 	OrderID  string `json:"orderId"`
 	BillCode string `json:"billCode"`
 	Update   bool   `json:"update,omitempty"`

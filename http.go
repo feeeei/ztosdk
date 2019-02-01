@@ -16,7 +16,33 @@ func init() {
 	httpClient = &http.Client{}
 }
 
-func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*common.ZTOResponse, error) {
+func (client *ZTOClient) postOrderRequest(path, sign string, r common.ZTORequest) (*common.ZTOOrderResponse, error) {
+	resp, err := client.postRequest(path, sign, r)
+	if err != nil {
+		return nil, err
+	}
+	var response common.ZTOOrderResponse
+	if err := json.Unmarshal(*(*resp)["data"], &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+func (client *ZTOClient) postPrintRequest(path, sign string, r common.ZTORequest) (*common.ZTOPrintResponse, error) {
+	resp, err := client.postRequest(path, sign, r)
+	if err != nil {
+		return nil, err
+	}
+	var response common.ZTOPrintResponse
+	if err := json.Unmarshal(*(*resp)["result"], &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*map[string]*json.RawMessage, error) {
 	url := fmt.Sprintf("%s%s", client.Host, path)
 	requestBody, err := r.EncodeBody()
 	if err != nil {
@@ -34,6 +60,7 @@ func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*c
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -49,11 +76,5 @@ func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*c
 		statusCode := strings.Replace(string(*respbody["statusCode"]), "\"", "", -1)
 		return nil, fmt.Errorf("%s %s", statusCode, message)
 	}
-
-	var response common.ZTOResponse
-	if err := json.Unmarshal(*respbody["data"], &response); err != nil {
-		return nil, err
-	}
-
-	return &response, nil
+	return &respbody, nil
 }
