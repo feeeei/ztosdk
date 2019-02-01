@@ -74,6 +74,42 @@ func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*
 	return client.postOrderRequest("partnerInsertSubmitagent", sign, request)
 }
 
+// UpdateOrders 预约寄件-批量更新订单（可用与批量取消订单）
+// 文档地址：https://zop.zto.com/apiDoc/  订单服务 -> 预约寄件-订单取消
+func (client *ZTOClient) UpdateOrders(orders *[]common.ZTOUpdateContent) (*[]common.ZTOUpdateResponse, error) {
+	request := &common.ZTOUpdateRequest{
+		CompanyID: client.CompanyID,
+		MsgType:   "UPDATE",
+		Data:      orders,
+	}
+	sign, err := request.Sign(client.Key)
+	if err != nil {
+		return nil, err
+	}
+	return client.updateOrderRequest("commonOrderUpdate", sign, request)
+}
+
+// UpdateOrder 预约寄件-更新订单（可用于取消订单）
+// 文档地址：https://zop.zto.com/apiDoc/  订单服务 -> 预约寄件-订单取消
+func (client *ZTOClient) UpdateOrder(order *common.ZTOUpdateContent) (*common.ZTOUpdateResponse, error) {
+	responses, err := client.UpdateOrders(&[]common.ZTOUpdateContent{*order})
+	if err != nil {
+		return nil, err
+	}
+	return &(*responses)[0], err
+}
+
+// CancelOrder 预约寄件-取消订单
+// 文档地址：https://zop.zto.com/apiDoc/  订单服务 -> 预约寄件-订单取消
+func (client *ZTOClient) CancelOrder(orderCode, reason string) (*common.ZTOUpdateResponse, error) {
+	return client.UpdateOrder(&common.ZTOUpdateContent{
+		OrderCode:  orderCode,
+		FieldName:  "status",
+		FieldValue: "cancel",
+		Reason:     reason,
+	})
+}
+
 // DoPrint 云打印-打印接口
 // 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 云打印-打印接口
 func (client *ZTOClient) DoPrint(request *common.ZTOPrintRequest) (*common.ZTOPrintResponse, error) {

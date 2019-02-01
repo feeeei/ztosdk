@@ -29,6 +29,19 @@ func (client *ZTOClient) postOrderRequest(path, sign string, r common.ZTORequest
 	return &response, nil
 }
 
+func (client *ZTOClient) updateOrderRequest(path, sign string, r common.ZTORequest) (*[]common.ZTOUpdateResponse, error) {
+	resp, err := client.postRequest(path, sign, r)
+	if err != nil {
+		return nil, err
+	}
+	var responses []common.ZTOUpdateResponse
+	if err := json.Unmarshal(*(*resp)["data"], &responses); err != nil {
+		return nil, err
+	}
+
+	return &responses, nil
+}
+
 func (client *ZTOClient) postPrintRequest(path, sign string, r common.ZTORequest) (*common.ZTOPrintResponse, error) {
 	resp, err := client.postRequest(path, sign, r)
 	if err != nil {

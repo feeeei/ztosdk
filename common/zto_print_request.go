@@ -8,14 +8,6 @@ import (
 	"net/url"
 )
 
-type PrintType int8
-
-const (
-	_ PrintType = iota
-	REMOTE_EPRINT
-	QRCODE_EPRINT
-)
-
 // doPrint 云打印-打印接口 request
 type ZTOPrintRequest struct {
 	PartnerCode         string               `json:"partnerCode"`
@@ -23,7 +15,7 @@ type ZTOPrintRequest struct {
 	DeviceID            string               `json:"deviceId,omitempty"`
 	QRCodeID            string               `json:"qrcodeId,omitempty"`
 	PrinterID           string               `json:"printerId,omitempty"`
-	PrintType           PrintType            `json:"printType"`
+	PrintType           string               `json:"printType"`
 	Repetition          bool                 `json:"repetition,omitempty"`
 	PrintParam          *PrintParam          `json:"printParam"`
 	Sender              *Sender              `json:"sender"`
