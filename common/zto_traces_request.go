@@ -9,16 +9,13 @@ import (
 	"net/url"
 )
 
-// ZTOSubmitAgentRequest 获取单号(无秘钥) request
-type ZTOSubmitAgentRequest struct {
-	CompanyID string      `json:"company_id,omitempty"`
-	MsgType   string      `json:"msg_type,omitempty"`
-	Data      *ZTOContent `json:"data,omitempty"`
+type ZTOTracesRequest struct {
+	CompanyID string    `json:"company_id"`
+	MsgType   string    `json:"msg_type"`
+	Data      *[]string `json:"data"`
 }
 
-func (r *ZTOSubmitAgentRequest) Sign(key *[]byte) (string, error) {
-	transportToSimpleAddress(r.Data.Receiver)
-	transportToSimpleAddress(r.Data.Sender)
+func (r *ZTOTracesRequest) Sign(key *[]byte) (string, error) {
 	var buf bytes.Buffer
 	body, err := json.Marshal(r.Data)
 	if err != nil {
@@ -34,12 +31,11 @@ func (r *ZTOSubmitAgentRequest) Sign(key *[]byte) (string, error) {
 	return base64.StdEncoding.EncodeToString(md5[:]), nil
 }
 
-func (r *ZTOSubmitAgentRequest) EncodeBody() (string, error) {
+func (r *ZTOTracesRequest) EncodeBody() (string, error) {
 	jsonBody, err := json.Marshal(r.Data)
 	if err != nil {
 		return "", err
 	}
-
 	values := url.Values{
 		"company_id": []string{r.CompanyID},
 		"msg_type":   []string{r.MsgType},

@@ -1,6 +1,8 @@
 package common
 
 import (
+	"fmt"
+
 	"github.com/feeeei/ztosdk/common/base"
 )
 
@@ -29,9 +31,10 @@ type ZTOContent struct {
 	OrderType        string    `json:"order_type,omitempty"`
 }
 
-type Sender worker
-type Receiver worker
+type Sender = worker
+type Receiver = worker
 
+// Prov City County 省市区三级关系，会根据不同request，构造为对应request要求格式
 type worker struct {
 	ID        string     `json:"id,omitempty"`
 	Name      string     `json:"name"`
@@ -39,11 +42,19 @@ type worker struct {
 	Mobile    string     `json:"mobile,omitempty"`
 	Phone     string     `json:"Phone,omitempty"`
 	Area      int        `json:"area,omitempty"`
-	City      string     `json:"city,omitempty"`
+	Prov      string     `json:"prov,omitempty"`
+	City      string     `json:"city"`
+	County    string     `json:"County,omitempty"`
 	Address   string     `json:"address,omitempty"`
 	ZIPCode   string     `json:"zipcode,omitempty"`
 	Email     string     `json:"email,omitempty"`
 	Im        string     `json:"im,omitempty"`
 	StartTime *base.Time `json:"starttime,omitempty"`
 	EndTime   *base.Time `json:"endtime,omitempty"`
+}
+
+func transportToSimpleAddress(worker *worker) {
+	worker.City = fmt.Sprintf("%s,%s,%s", worker.Prov, worker.City, worker.County)
+	worker.Prov = ""
+	worker.County = ""
 }

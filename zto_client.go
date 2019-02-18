@@ -13,11 +13,10 @@ type ZTOClient struct {
 	CompanyID string
 	Key       *[]byte
 	Partner   string
-	Verify    string
 	Debug     bool
 }
 
-func NewZTOClient(host, companyID, key, partner, verify string) *ZTOClient {
+func NewZTOClient(host, companyID, key, partner string) *ZTOClient {
 	k := []byte(key)
 	debug := getEnvironment(host)
 
@@ -25,7 +24,6 @@ func NewZTOClient(host, companyID, key, partner, verify string) *ZTOClient {
 		Host:      host,
 		CompanyID: companyID,
 		Partner:   partner,
-		Verify:    verify,
 		Key:       &k,
 		Debug:     debug,
 	}
@@ -37,7 +35,7 @@ func getEnvironment(host string) bool {
 
 // SubmitOrderCode 创建电子运单
 // 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取运单号（有密钥）
-func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZTOOrderResponse, error) {
+func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent, verify string) (*common.ZTOOrderResponse, error) {
 	if client.Debug {
 		content.ID = "xfs101100111011"
 	}
@@ -45,7 +43,7 @@ func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZT
 	request := &common.ZTOSubmitEncryptRequest{
 		Partner:  client.Partner,
 		Datetime: &now,
-		Verify:   client.Verify,
+		Verify:   verify,
 		Content:  content,
 	}
 	sign, err := request.Sign(client.Key)
@@ -58,6 +56,9 @@ func (client *ZTOClient) SubmitOrderCode(content *common.ZTOContent) (*common.ZT
 // PartnerInsertSubmitagent 创建电子运单
 // 文档地址：https://zop.zto.com/apiDoc/  电子面单 -> 获取单号（无秘钥）
 func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*common.ZTOOrderResponse, error) {
+	if content.Partner == "" {
+		content.Partner = client.Partner
+	}
 	if client.Debug {
 		content.Partner = "test"
 		content.ID = "xfs101100111011"
@@ -118,4 +119,19 @@ func (client *ZTOClient) DoPrint(request *common.ZTOPrintRequest) (*common.ZTOPr
 		return nil, err
 	}
 	return client.postPrintRequest("doPrint", sign, request)
+}
+
+// TraceInterfaceNewTraces 快件轨迹-获取快件轨迹信息
+// 文档地址：https://zop.zto.com/apiDoc/  快件轨迹 ->获取快件轨迹信息
+func (client *ZTOClient) TraceInterfaceNewTraces(billCodes *[]string) (*[]common.ZTOTraceResponse, error) {
+	request := &common.ZTOTracesRequest{
+		CompanyID: client.CompanyID,
+		MsgType:   "NEW_TRACES",
+		Data:      billCodes,
+	}
+	sign, err := request.Sign(client.Key)
+	if err != nil {
+		return nil, err
+	}
+	return client.postTraceInterfaceNewTraces("traceInterfaceLatest", sign, request)
 }

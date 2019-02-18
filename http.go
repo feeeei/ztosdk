@@ -1,6 +1,7 @@
 package ztosdk
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -55,6 +56,18 @@ func (client *ZTOClient) postPrintRequest(path, sign string, r common.ZTORequest
 	return &response, nil
 }
 
+func (client *ZTOClient) postTraceInterfaceNewTraces(path, sign string, r common.ZTORequest) (*[]common.ZTOTraceResponse, error) {
+	resp, err := client.postRequest(path, sign, r)
+	if err != nil {
+		return nil, err
+	}
+	var responses []common.ZTOTraceResponse
+	if err := json.Unmarshal(*(*resp)["data"], &responses); err != nil {
+		return nil, err
+	}
+	return &responses, nil
+}
+
 func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*map[string]*json.RawMessage, error) {
 	url := fmt.Sprintf("%s%s", client.Host, path)
 	requestBody, err := r.EncodeBody()
@@ -84,10 +97,43 @@ func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*m
 	if err := json.Unmarshal(body, &respbody); err != nil {
 		return nil, err
 	}
-	if respbody["status"] != nil && string(*respbody["status"]) == "false" {
-		message := strings.Replace(string(*respbody["message"]), "\"", "", -1)
-		statusCode := strings.Replace(string(*respbody["statusCode"]), "\"", "", -1)
-		return nil, fmt.Errorf("%s %s", statusCode, message)
+	if err := handleError(&respbody); err != "" {
+		return nil, fmt.Errorf(err)
 	}
 	return &respbody, nil
+}
+
+var errorFieldValue = [...][]byte{[]byte("\"FALSE\""), []byte("\"false\""), []byte("false")}
+
+func handleError(respBody *map[string]*json.RawMessage) string {
+	message := (*respBody)["message"]
+	result := (*respBody)["result"]
+	status := (*respBody)["status"]
+	statusCode := (*respBody)["statusCode"]
+
+	isFailed := false
+	for i := 0; i < len(errorFieldValue); i++ {
+		compare := false
+		if !compare && message != nil {
+			compare = bytes.Equal(errorFieldValue[i], *message)
+		}
+		if !compare && result != nil {
+			compare = bytes.Equal(errorFieldValue[i], *result)
+		}
+		if !compare && status != nil {
+			compare = bytes.Equal(errorFieldValue[i], *status)
+		}
+		if compare {
+			isFailed = true
+		}
+	}
+	if isFailed {
+		msg := strings.Replace(string(*message), "\"", "", -1)
+		code := ""
+		if statusCode != nil {
+			code = strings.Replace(string(*statusCode), "\"", "", -1)
+		}
+		return fmt.Sprintf("%s %s", msg, code)
+	}
+	return ""
 }

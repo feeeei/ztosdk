@@ -20,7 +20,7 @@ type ZTOPrintRequest struct {
 	PrintParam          *PrintParam          `json:"printParam"`
 	Sender              *Sender              `json:"sender"`
 	Receiver            *Receiver            `json:"receiver"`
-	AppreciationService *AppreciationService `json:"appreciationService"`
+	AppreciationService *AppreciationService `json:"appreciationService,omitempty"`
 	PayType             string               `json:"payType,omitempty"`
 	SiteName            string               `json:"siteName,omitempty"`
 	Remark              string               `json:"remark,omitempty"`

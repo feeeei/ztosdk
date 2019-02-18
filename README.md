@@ -25,9 +25,8 @@
    companyID := "kfpttestCode"
    key       := "kfpttestkey=="
    partner   := "test"
-   verify    := "ZTO123"
  
-   client := ztosdk.NewZTOClient(host, companyID, key, partner, verify)
+   client := ztosdk.NewZTOClient(host, companyID, key, partner)
    ```
 1. 实现业务
    ##### 电子面单 -> 获取单号(有密钥)
@@ -39,21 +38,26 @@
 	  Sender: &common.Sender{
 	    Name:    "发件人姓名",
 	    Company: "发件人公司（可不填）",
-	    Mobile:  "18xxxxxxxxx",
-	    City:    "北京市,北京市,xx区",
+      Mobile:  "18xxxxxxxxx",
+      Prov:    "北京市",
+      City:    "北京市",
+      County:  "朝阳区",
 	    Address: "详细地址",
 	    ZIPCode: "邮编（可不填）",
 	    Email:   "发件人邮箱（可不填）",
 	  },
 	  Receiver: &common.Receiver{
 	    Name:    "收件人姓名",
-	    Mobile:  "15xxxxxxxxx",
-	    City:    "北京市,北京市,xx区",
+      Mobile:  "15xxxxxxxxx",
+      Prov:    "北京市",
+      City:    "北京市",
+      County:  "朝阳区",
 	    Address: "详细地址",
     },
    }
    
-   resp, err := client.SubmitOrderCode(ztoContent)
+   verify := "ZTO123"
+   resp, err := client.SubmitOrderCode(ztoContent, verify)
    // TODO ......
    ```
    

@@ -10,7 +10,7 @@ import (
 	"github.com/feeeei/ztosdk/common/base"
 )
 
-// ZTOSubmitRequest 获取单号(有密钥) request
+// ZTOSubmitRequest 获取运单号(有密钥) request
 type ZTOSubmitEncryptRequest struct {
 	Partner  string      `json:"partner,omitempty"`
 	Datetime *base.Time  `json:"datetime,omitempty"`
@@ -35,6 +35,8 @@ func (r *ZTOSubmitEncryptRequest) Sign(key *[]byte) (string, error) {
 }
 
 func (r *ZTOSubmitEncryptRequest) EncodeBody() (string, error) {
+	transportToSimpleAddress(r.Content.Receiver)
+	transportToSimpleAddress(r.Content.Sender)
 	jsonBody, err := json.Marshal(r)
 	if err != nil {
 		return "", err
