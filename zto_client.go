@@ -135,3 +135,16 @@ func (client *ZTOClient) TraceInterfaceNewTraces(billCodes *[]string) (*[]common
 	}
 	return client.postTraceInterfaceNewTraces("traceInterfaceLatest", sign, request)
 }
+
+func (client *ZTOClient) TraceInterfaceLatest(billCodes *[]string) (*[]common.ZTOLastTraceResponse, error) {
+	request := &common.ZTOTracesRequest{
+		CompanyID: client.CompanyID,
+		MsgType:   "LATEST",
+		Data:      billCodes,
+	}
+	sign, err := request.Sign(client.Key)
+	if err != nil {
+		return nil, err
+	}
+	return client.postTraceInterfaceLatest("traceInterfaceLatest", sign, request)
+}

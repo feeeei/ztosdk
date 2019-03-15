@@ -7,7 +7,8 @@
  - 获取单号（无密钥） partnerInsertSubmitagent
  - 云打印-打印接口 doPrint
  - 预约寄件-订单取消 commonOrderUpdate
-
+ - 获取快件轨迹信息 traceInterfaceNewTraces
+ - 获取快件最新一条 traceInterfaceLatest
 ## 使用示例
 1. 引入
 
@@ -83,6 +84,18 @@
    ##### 订单服务 -> 预约寄件-订单取消
    ```go
    resp, err := client.CancelOrder("订单号", "取消原因")
+   // TODO ......
+   ```
+
+   ##### 快件轨迹 -> 获取快件轨迹信息（最多单次查询10条记录）
+   ```go
+   resp, err := client.TraceInterfaceNewTraces(&[]string{"订单号"})
+   // TODO ......
+   ```
+   
+   ##### 快件轨迹 -> 获取快件最新一条（最多单次查询10条记录）
+   ```go
+   resp, err := client.TraceInterfaceLatest(&[]string{"订单号"})
    // TODO ......
    ```
    

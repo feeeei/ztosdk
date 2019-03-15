@@ -68,6 +68,18 @@ func (client *ZTOClient) postTraceInterfaceNewTraces(path, sign string, r common
 	return &responses, nil
 }
 
+func (client *ZTOClient) postTraceInterfaceLatest(path, sign string, r common.ZTORequest) (*[]common.ZTOLastTraceResponse, error) {
+	resp, err := client.postRequest(path, sign, r)
+	if err != nil {
+		return nil, err
+	}
+	var responses []common.ZTOLastTraceResponse
+	if err := json.Unmarshal(*(*resp)["data"], &responses); err != nil {
+		return nil, err
+	}
+	return &responses, nil
+}
+
 func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*map[string]*json.RawMessage, error) {
 	url := fmt.Sprintf("%s%s", client.Host, path)
 	requestBody, err := r.EncodeBody()

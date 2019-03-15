@@ -9,6 +9,11 @@ type ZTOTraceResponse struct {
 	Traces   *[]ZTOTraceInfo `json:"traces"`
 }
 
+type ZTOLastTraceResponse struct {
+	BillCode string       `json:"billCode"`
+	Traces   ZTOTraceInfo `json:"traces"`
+}
+
 type ZTOTraceInfo struct {
 	Desc              string     `json:"desc"`
 	DispOrRecMan      string     `json:"dispOrRecMan,omitempty"`
