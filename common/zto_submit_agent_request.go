@@ -16,7 +16,7 @@ type ZTOSubmitAgentRequest struct {
 	Data      *ZTOContent `json:"data,omitempty"`
 }
 
-func (r *ZTOSubmitAgentRequest) Sign(key *[]byte) (string, error) {
+func (r *ZTOSubmitAgentRequest) Sign(key []byte) (string, error) {
 	transportToSimpleAddress(r.Data.Receiver)
 	transportToSimpleAddress(r.Data.Sender)
 	var buf bytes.Buffer
@@ -26,7 +26,7 @@ func (r *ZTOSubmitAgentRequest) Sign(key *[]byte) (string, error) {
 	}
 	raw := fmt.Sprintf("company_id=%s&data=%s&msg_type=%s", r.CompanyID, body, r.MsgType)
 	_, err = buf.Write([]byte(raw))
-	_, err = buf.Write(*key)
+	_, err = buf.Write(key)
 	if err != nil {
 		return "", err
 	}

@@ -10,12 +10,12 @@ import (
 )
 
 type ZTOTracesRequest struct {
-	CompanyID string    `json:"company_id"`
-	MsgType   string    `json:"msg_type"`
-	Data      *[]string `json:"data"`
+	CompanyID string   `json:"company_id"`
+	MsgType   string   `json:"msg_type"`
+	Data      []string `json:"data"`
 }
 
-func (r *ZTOTracesRequest) Sign(key *[]byte) (string, error) {
+func (r *ZTOTracesRequest) Sign(key []byte) (string, error) {
 	var buf bytes.Buffer
 	body, err := json.Marshal(r.Data)
 	if err != nil {
@@ -23,7 +23,7 @@ func (r *ZTOTracesRequest) Sign(key *[]byte) (string, error) {
 	}
 	raw := fmt.Sprintf("company_id=%s&data=%s&msg_type=%s", r.CompanyID, body, r.MsgType)
 	_, err = buf.Write([]byte(raw))
-	_, err = buf.Write(*key)
+	_, err = buf.Write(key)
 	if err != nil {
 		return "", err
 	}

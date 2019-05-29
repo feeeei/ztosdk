@@ -11,7 +11,7 @@ import (
 type ZTOClient struct {
 	Host      string
 	CompanyID string
-	Key       *[]byte
+	Key       []byte
 	Partner   string
 	Debug     bool
 }
@@ -24,7 +24,7 @@ func NewZTOClient(host, companyID, key, partner string) *ZTOClient {
 		Host:      host,
 		CompanyID: companyID,
 		Partner:   partner,
-		Key:       &k,
+		Key:       k,
 		Debug:     debug,
 	}
 }
@@ -77,7 +77,7 @@ func (client *ZTOClient) PartnerInsertSubmitagent(content *common.ZTOContent) (*
 
 // UpdateOrders 预约寄件-批量更新订单（可用与批量取消订单）
 // 文档地址：https://zop.zto.com/apiDoc/  订单服务 -> 预约寄件-订单取消
-func (client *ZTOClient) UpdateOrders(orders *[]common.ZTOUpdateContent) (*[]common.ZTOUpdateResponse, error) {
+func (client *ZTOClient) UpdateOrders(orders []common.ZTOUpdateContent) ([]common.ZTOUpdateResponse, error) {
 	request := &common.ZTOUpdateRequest{
 		CompanyID: client.CompanyID,
 		MsgType:   "UPDATE",
@@ -93,11 +93,11 @@ func (client *ZTOClient) UpdateOrders(orders *[]common.ZTOUpdateContent) (*[]com
 // UpdateOrder 预约寄件-更新订单（可用于取消订单）
 // 文档地址：https://zop.zto.com/apiDoc/  订单服务 -> 预约寄件-订单取消
 func (client *ZTOClient) UpdateOrder(order *common.ZTOUpdateContent) (*common.ZTOUpdateResponse, error) {
-	responses, err := client.UpdateOrders(&[]common.ZTOUpdateContent{*order})
+	responses, err := client.UpdateOrders([]common.ZTOUpdateContent{*order})
 	if err != nil {
 		return nil, err
 	}
-	return &(*responses)[0], err
+	return &responses[0], err
 }
 
 // CancelOrder 预约寄件-取消订单
@@ -123,7 +123,7 @@ func (client *ZTOClient) DoPrint(request *common.ZTOPrintRequest) (*common.ZTOPr
 
 // TraceInterfaceNewTraces 快件轨迹-获取快件轨迹信息
 // 文档地址：https://zop.zto.com/apiDoc/  快件轨迹 ->获取快件轨迹信息
-func (client *ZTOClient) TraceInterfaceNewTraces(billCodes *[]string) (*[]common.ZTOTraceResponse, error) {
+func (client *ZTOClient) TraceInterfaceNewTraces(billCodes []string) ([]common.ZTOTraceResponse, error) {
 	request := &common.ZTOTracesRequest{
 		CompanyID: client.CompanyID,
 		MsgType:   "NEW_TRACES",
@@ -136,7 +136,7 @@ func (client *ZTOClient) TraceInterfaceNewTraces(billCodes *[]string) (*[]common
 	return client.postTraceInterfaceNewTraces("traceInterfaceLatest", sign, request)
 }
 
-func (client *ZTOClient) TraceInterfaceLatest(billCodes *[]string) (*[]common.ZTOLastTraceResponse, error) {
+func (client *ZTOClient) TraceInterfaceLatest(billCodes []string) ([]common.ZTOLastTraceResponse, error) {
 	request := &common.ZTOTracesRequest{
 		CompanyID: client.CompanyID,
 		MsgType:   "LATEST",

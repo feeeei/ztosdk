@@ -6,7 +6,7 @@ import (
 
 type ZTOTraceResponse struct {
 	BillCode string          `json:"billCode"`
-	Traces   *[]ZTOTraceInfo `json:"traces"`
+	Traces   []ZTOTraceInfo `json:"traces"`
 }
 
 type ZTOLastTraceResponse struct {

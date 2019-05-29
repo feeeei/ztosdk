@@ -18,7 +18,7 @@ type ZTOSubmitEncryptRequest struct {
 	Content  *ZTOContent `json:"content,omitempty"`
 }
 
-func (r *ZTOSubmitEncryptRequest) Sign(key *[]byte) (string, error) {
+func (r *ZTOSubmitEncryptRequest) Sign(key []byte) (string, error) {
 	var buf bytes.Buffer
 	body, err := json.Marshal(r)
 	if err != nil {
@@ -26,7 +26,7 @@ func (r *ZTOSubmitEncryptRequest) Sign(key *[]byte) (string, error) {
 	}
 	_, err = buf.Write([]byte("data="))
 	_, err = buf.Write(body)
-	_, err = buf.Write(*key)
+	_, err = buf.Write(key)
 	if err != nil {
 		return "", err
 	}

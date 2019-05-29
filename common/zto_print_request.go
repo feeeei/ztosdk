@@ -41,7 +41,7 @@ type AppreciationService struct {
 	GoodsName        string `json:"goodsName,omitempty"`
 }
 
-func (r *ZTOPrintRequest) Sign(key *[]byte) (string, error) {
+func (r *ZTOPrintRequest) Sign(key []byte) (string, error) {
 	var buf bytes.Buffer
 	body, err := json.Marshal(r)
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *ZTOPrintRequest) Sign(key *[]byte) (string, error) {
 	}
 	_, err = buf.Write([]byte("request="))
 	_, err = buf.Write(body)
-	_, err = buf.Write(*key)
+	_, err = buf.Write(key)
 	if err != nil {
 		return "", err
 	}

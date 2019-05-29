@@ -30,7 +30,7 @@ func (client *ZTOClient) postOrderRequest(path, sign string, r common.ZTORequest
 	return &response, nil
 }
 
-func (client *ZTOClient) updateOrderRequest(path, sign string, r common.ZTORequest) (*[]common.ZTOUpdateResponse, error) {
+func (client *ZTOClient) updateOrderRequest(path, sign string, r common.ZTORequest) ([]common.ZTOUpdateResponse, error) {
 	resp, err := client.postRequest(path, sign, r)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (client *ZTOClient) updateOrderRequest(path, sign string, r common.ZTOReque
 		return nil, err
 	}
 
-	return &responses, nil
+	return responses, nil
 }
 
 func (client *ZTOClient) postPrintRequest(path, sign string, r common.ZTORequest) (*common.ZTOPrintResponse, error) {
@@ -56,7 +56,7 @@ func (client *ZTOClient) postPrintRequest(path, sign string, r common.ZTORequest
 	return &response, nil
 }
 
-func (client *ZTOClient) postTraceInterfaceNewTraces(path, sign string, r common.ZTORequest) (*[]common.ZTOTraceResponse, error) {
+func (client *ZTOClient) postTraceInterfaceNewTraces(path, sign string, r common.ZTORequest) ([]common.ZTOTraceResponse, error) {
 	resp, err := client.postRequest(path, sign, r)
 	if err != nil {
 		return nil, err
@@ -65,10 +65,10 @@ func (client *ZTOClient) postTraceInterfaceNewTraces(path, sign string, r common
 	if err := json.Unmarshal(*(*resp)["data"], &responses); err != nil {
 		return nil, err
 	}
-	return &responses, nil
+	return responses, nil
 }
 
-func (client *ZTOClient) postTraceInterfaceLatest(path, sign string, r common.ZTORequest) (*[]common.ZTOLastTraceResponse, error) {
+func (client *ZTOClient) postTraceInterfaceLatest(path, sign string, r common.ZTORequest) ([]common.ZTOLastTraceResponse, error) {
 	resp, err := client.postRequest(path, sign, r)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (client *ZTOClient) postTraceInterfaceLatest(path, sign string, r common.ZT
 	if err := json.Unmarshal(*(*resp)["data"], &responses); err != nil {
 		return nil, err
 	}
-	return &responses, nil
+	return responses, nil
 }
 
 func (client *ZTOClient) postRequest(path, sign string, r common.ZTORequest) (*map[string]*json.RawMessage, error) {
